@@ -3,11 +3,7 @@ package worktree.windson.git_worktree_manage
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.MessageDialogBuilder
-import com.intellij.openapi.ui.Messages
-import com.intellij.openapi.ui.ex.MessagesEx
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.util.containers.toArray
-import git4idea.GitUtil
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader

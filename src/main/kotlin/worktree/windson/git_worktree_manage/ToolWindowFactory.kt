@@ -1,11 +1,14 @@
 package worktree.windson.git_worktree_manage
 
-import com.intellij.codeInsight.codeVision.CodeVisionState.NotReady.result
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.wm.ToolWindow
+import com.intellij.ui.JBColor
 import com.intellij.ui.content.ContentFactory
 import com.intellij.ui.dsl.builder.panel
-import javax.swing.JButton
+import java.awt.Color
+import java.awt.Dimension
+import java.awt.GridLayout
+import javax.swing.BorderFactory
 import javax.swing.JPanel
 
 class ToolWindowFactory: com.intellij.openapi.wm.ToolWindowFactory {
@@ -16,11 +19,14 @@ class ToolWindowFactory: com.intellij.openapi.wm.ToolWindowFactory {
 
     private fun createToolWindow(project: Project): JPanel{
         val result = JPanel()
-        addComponents(project, result)
+        val subPanel = JPanel(GridLayout(3, 1))
+        subPanel.size = Dimension(200, 100)
+        result.add(subPanel)
+        addComponents(project, subPanel)
         return result
     }
     private fun addComponents(project: Project,panel: JPanel){
-        panel.add(panel {
+        val refreshPanel = panel {
             row {
                 button("刷新"){
                     panel.removeAll()
@@ -30,8 +36,14 @@ class ToolWindowFactory: com.intellij.openapi.wm.ToolWindowFactory {
                     panel.isVisible = true
                 }
             }
-        })
-        panel.add(getWorktreeList(project))
-        panel.add(getBranchList(project))
+        }
+        refreshPanel.size = Dimension(100, 30)
+        panel.add(refreshPanel)
+        val branchListPanel = getBranchList(project)
+        branchListPanel.size = Dimension(100, 30)
+        panel.add(branchListPanel)
+        val worktreeListPanel = getWorktreeList(project)
+        worktreeListPanel.size = Dimension(100, 30)
+        panel.add(worktreeListPanel)
     }
 }
