@@ -1,3 +1,5 @@
+@file:Suppress("DuplicatedCode")
+
 package worktree.windson.git_worktree_manage
 
 import com.intellij.ide.impl.ProjectUtil
@@ -22,7 +24,7 @@ fun execCmd(cmdr: String, workPath: Path) {
         exec = if (os.lowercase(Locale.getDefault()).startsWith("win")) {
             runtime.exec(cmdr, null, workPath.toFile())
         } else {
-            val cmd = arrayOf<String>("/bin/sh", "-c", cmdr)
+            val cmd = arrayOf("/bin/sh", "-c", cmdr)
             runtime.exec(cmd, null, workPath.toFile())
         }
         exec.waitFor(20, TimeUnit.SECONDS)
@@ -57,7 +59,7 @@ fun getWorktreePathMap(project: Project): MutableMap<String, String> {
         exec = if (os.lowercase(Locale.getDefault()).startsWith("win")) {
             runtime.exec(cmdr, null, workPath.toFile())
         } else {
-            val cmd = arrayOf<String>("/bin/sh", "-c", cmdr)
+            val cmd = arrayOf("/bin/sh", "-c", cmdr)
             runtime.exec(cmd, null, workPath.toFile())
         }
         exec.waitFor(5, TimeUnit.SECONDS)
@@ -76,9 +78,9 @@ fun getWorktreePathMap(project: Project): MutableMap<String, String> {
         br.close()
         gitWorktreeList = mavenOutput.split("\n")
     } catch (e: IOException) {
-//        LOG.error(e)
+        // LOG.error(e)
     } catch (e: InterruptedException) {
-//        LOG.error(e)
+        // LOG.error(e)
     }
     val pathMap = mutableMapOf<String, String>()
     gitWorktreeList.forEach {
@@ -115,10 +117,9 @@ fun getWorktreeList(project: Project): JPanel {
     return result
 }
 
-@Suppress("DuplicatedCode")
 fun getBranchList(project: Project): JPanel {
     val runtime = Runtime.getRuntime()
-    var originBranchs = listOf<String>()
+    var originBranches = listOf<String>()
     try {
         val exec: Process
         val os = System.getProperty("os.name")
@@ -127,7 +128,7 @@ fun getBranchList(project: Project): JPanel {
         exec = if (os.lowercase(Locale.getDefault()).startsWith("win")) {
             runtime.exec(cmdr, null, workPath.toFile())
         } else {
-            val cmd = arrayOf<String>("/bin/sh", "-c", cmdr)
+            val cmd = arrayOf("/bin/sh", "-c", cmdr)
             runtime.exec(cmd, null, workPath.toFile())
         }
         exec.waitFor(20, TimeUnit.SECONDS)
@@ -144,7 +145,7 @@ fun getBranchList(project: Project): JPanel {
         }
         exec.destroy()
         br.close()
-        originBranchs = mavenOutput.split("\n").filter { it.trim().length > 0 }.map { it.replace("origin/", "") }
+        originBranches = mavenOutput.split("\n").filter { it.trim().isNotEmpty() }.map { it.replace("origin/", "") }
     } catch (e: IOException) {
         //
     } catch (e: InterruptedException) {
@@ -153,11 +154,11 @@ fun getBranchList(project: Project): JPanel {
 
     val basePath = project.basePath!!
     val projectName = project.name
-    val rBranchs = originBranchs
+    val rBranches = originBranches
 
     val result = panel {
         row("可用分支") {
-            val cb = comboBox(rBranchs)
+            val cb = comboBox(rBranches)
             button("新建") {
                 val branch = cb.component.selectedItem
                 val cmdr = "git worktree add ../$projectName.worktree/$projectName@$branch $branch"
