@@ -93,14 +93,14 @@ fun getWorktreePathMap(project: Project): MutableMap<String, String> {
 fun getWorktreeList(project: Project): JPanel {
     val pathMap = getWorktreePathMap(project)
     val result = panel {
-        row("已存在的worktree") {
+        row("可用worktree") {
             val cb = comboBox(pathMap.keys.toList().filter { it.isNotEmpty() })
-            button("打开worktree项目") {
+            button("打开") {
                 val branch = cb.component.selectedItem
                 val path = pathMap[branch]!!
                 ProjectUtil.openOrImport(path, null, true)
             }
-            button("移除worktree项目") {
+            button("移除") {
                 val branch = cb.component.selectedItem
                 val path = pathMap[branch]!!
                 val cmdr = "git worktree remove $path"
@@ -156,9 +156,9 @@ fun getBranchList(project: Project): JPanel {
     val rBranchs = originBranchs
 
     val result = panel {
-        row("可以创建的worktree") {
+        row("可用分支") {
             val cb = comboBox(rBranchs)
-            button("创建新的worktree") {
+            button("新建") {
                 val branch = cb.component.selectedItem
                 val cmdr = "git worktree add ../$projectName.worktree/$projectName.$branch $branch"
                 val workPath = Paths.get(basePath)
