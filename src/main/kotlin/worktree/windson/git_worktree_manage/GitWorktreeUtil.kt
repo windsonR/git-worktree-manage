@@ -160,11 +160,11 @@ fun getBranchList(project: Project): JPanel {
             val cb = comboBox(rBranchs)
             button("新建") {
                 val branch = cb.component.selectedItem
-                val cmdr = "git worktree add ../$projectName.worktree/$projectName.$branch $branch"
+                val cmdr = "git worktree add ../$projectName.worktree/$projectName@$branch $branch"
                 val workPath = Paths.get(basePath)
                 execCmd(cmdr, workPath)
 
-                val path = "$basePath.worktree/$projectName.$branch"
+                val path = "$basePath.worktree/$projectName@$branch"
                 ProjectUtil.openOrImport(path, null, true)
             }
         }
