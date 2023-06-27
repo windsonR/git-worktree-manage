@@ -98,12 +98,12 @@ fun getWorktreeList(project: Project): JPanel {
         row("可用worktree") {
             val cb = comboBox(pathMap.keys.toList().filter { it.isNotEmpty() })
             button("打开") {
-                val branch = cb.component.selectedItem
+                val branch = cb.component.selectedItem?.toString()?.trim()
                 val path = pathMap[branch]!!
                 ProjectUtil.openOrImport(path, null, true)
             }
             button("移除") {
-                val branch = cb.component.selectedItem
+                val branch = cb.component.selectedItem?.toString()?.trim()
                 val path = pathMap[branch]!!
                 val cmdr = "git worktree remove $path"
                 val workPath = Paths.get(project.basePath!!)
@@ -160,7 +160,7 @@ fun getBranchList(project: Project): JPanel {
         row("可用分支") {
             val cb = comboBox(rBranches)
             button("新建") {
-                val branch = cb.component.selectedItem
+                val branch = cb.component.selectedItem?.toString()?.trim()
                 val cmdr = "git worktree add ../$projectName.worktree/$projectName@$branch $branch"
                 val workPath = Paths.get(basePath)
                 execCmd(cmdr, workPath)
