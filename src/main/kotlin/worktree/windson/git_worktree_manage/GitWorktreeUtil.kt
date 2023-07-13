@@ -152,7 +152,8 @@ fun getBranchList(project: Project): JPanel {
         //
     }
 
-    val basePath = project.basePath!!
+    var basePath = project.basePath!!
+
     val projectName = project.name
     val rBranches = originBranches
 
@@ -161,11 +162,16 @@ fun getBranchList(project: Project): JPanel {
             val cb = comboBox(rBranches)
             button("新建") {
                 val branch = cb.component.selectedItem?.toString()?.trim()
-                val cmdr = "git worktree add ../$projectName.worktree/$projectName@$branch $branch"
+                val realProjectName = projectName.split('@')[0]
+                if (basePath.indexOf("worktree")>0){
+                    basePath = basePath.substring(0,basePath.indexOf(realProjectName)+realProjectName.length)
+                }
+                val path = "$basePath.worktree/$realProjectName@$branch"
+
+                val cmdr = "git worktree add $path $branch"
                 val workPath = Paths.get(basePath)
                 execCmd(cmdr, workPath)
 
-                val path = "$basePath.worktree/$projectName@$branch"
                 ProjectUtil.openOrImport(path, null, true)
             }
         }
