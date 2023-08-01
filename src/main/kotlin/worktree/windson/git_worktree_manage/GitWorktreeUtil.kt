@@ -120,6 +120,7 @@ fun getWorktreeList(project: Project): JPanel {
 fun getBranchList(project: Project): JPanel {
     val runtime = Runtime.getRuntime()
     var originBranches = listOf<String>()
+    val alreadyExistBranches = getWorktreePathMap(project).keys
     try {
         val exec: Process
         val os = System.getProperty("os.name")
@@ -155,7 +156,9 @@ fun getBranchList(project: Project): JPanel {
     var basePath = project.basePath!!
 
     val projectName = project.name
-    val rBranches = originBranches
+    val rBranches = originBranches.filter {
+        !alreadyExistBranches.contains(it.trim())
+    }
 
     val result = panel {
         row("可用分支") {
