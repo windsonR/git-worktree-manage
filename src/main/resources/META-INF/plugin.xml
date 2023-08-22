@@ -14,8 +14,13 @@
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description>
-        A tool for managing git worktrees using graphical interfaces
-        一个可以在图形界面管理git的worktree的插件
+        Git_worktree_manage allow manage git worktrees using graphical interfaces, you can create, delete and switch worktrees with ease.
+        <![CDATA[
+<ul>
+<li>manage git worktree in toolwindow</li>
+<li>easy to create/delete/switch worktree</li>
+</ul>
+]]>
     </description>
 
     <!-- Product and plugin compatibility requirements.
