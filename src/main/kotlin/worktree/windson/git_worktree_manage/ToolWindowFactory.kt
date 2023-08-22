@@ -28,7 +28,7 @@ class ToolWindowFactory: com.intellij.openapi.wm.ToolWindowFactory {
     private fun addComponents(project: Project,panel: JPanel){
         val refreshPanel = panel {
             row {
-                button("刷新"){
+                button("refresh"){
                     panel.removeAll()
                     addComponents(project, panel)
                     panel.revalidate()
