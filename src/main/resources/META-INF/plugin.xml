@@ -14,11 +14,12 @@
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description>
-        Git_worktree_manage allow manage git worktrees using graphical interfaces, you can create, delete and switch worktrees with ease.
+        Git_worktree_manage allow manage git worktrees in Toolbox, you can create, delete and switch worktrees-project in an easy way.
         <![CDATA[
 <ul>
-<li>manage git worktree in toolwindow</li>
-<li>easy to create/delete/switch worktree</li>
+<li>Create/Delete git worktree in toolwindow</li>
+<li>Open/Switch project(with a created git worktree) in IDE</li>
+<li>Worktree directory's name and path easy to find</li>
 </ul>
 ]]>
     </description>
