@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "worktree.windson"
-version = "1.0.4"
+version = "1.0.5"
 
 repositories {
     mavenCentral()
@@ -31,7 +31,7 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("222.*")
+        sinceBuild.set("221.*")
         untilBuild.set("")
     }
 
