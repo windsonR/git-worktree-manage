@@ -124,7 +124,7 @@ fun getBranchList(project: Project): JPanel {
     try {
         val exec: Process
         val os = System.getProperty("os.name")
-        val cmdr = "git branch -r"
+        val cmdr = "git branch -a"
         val workPath = Paths.get(project.basePath!!)
         exec = if (os.lowercase(Locale.getDefault()).startsWith("win")) {
             runtime.exec(cmdr, null, workPath.toFile())
@@ -147,6 +147,7 @@ fun getBranchList(project: Project): JPanel {
         exec.destroy()
         br.close()
         originBranches = mavenOutput.split("\n").filter { it.trim().isNotEmpty() }.map { it.replace("origin/", "") }
+            .map { it.trim() }.filter { it.indexOf("+") < 0 && it.indexOf("*") < 0 }
     } catch (e: IOException) {
         //
     } catch (e: InterruptedException) {
@@ -158,21 +159,31 @@ fun getBranchList(project: Project): JPanel {
     val projectName = project.name
     val rBranches = originBranches.filter {
         !alreadyExistBranches.contains(it.trim())
+    }.filter {
+        !alreadyExistBranches.contains(it.trim().replace("remotes/", ""))
     }
 
     val result = panel {
         row("Local branches") {
             val cb = comboBox(rBranches)
             button("New") {
-                val branch = cb.component.selectedItem?.toString()?.trim()
+                var branch = cb.component.selectedItem?.toString()?.trim()
                 val realProjectName = projectName.split('@')[0]
-                if (basePath.indexOf("worktree")>0){
-                    basePath = basePath.substring(0,basePath.indexOf(realProjectName)+realProjectName.length)
+                if (basePath.indexOf("worktree") > 0) {
+                    basePath = basePath.substring(0, basePath.indexOf(realProjectName) + realProjectName.length)
                 }
                 val path = "$basePath.worktree/$realProjectName@$branch"
 
-                val cmdr = "git worktree add $path $branch"
                 val workPath = Paths.get(basePath)
+
+                if (branch?.indexOf("remotes/") == 0) {
+                    branch = branch.replace("remotes/", "")
+                    val newBranchCmdr = "git branch $branch origin/$branch"
+                    execCmd(newBranchCmdr, workPath)
+                }
+
+                val cmdr = "git worktree add $path $branch"
+
                 execCmd(cmdr, workPath)
 
                 ProjectUtil.openOrImport(path, null, true)
