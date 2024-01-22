@@ -172,15 +172,18 @@ fun getBranchList(project: Project): JPanel {
                 if (basePath.indexOf("worktree") > 0) {
                     basePath = basePath.substring(0, basePath.indexOf(realProjectName) + realProjectName.length)
                 }
-                val path = "$basePath.worktree/$realProjectName@$branch"
 
                 val workPath = Paths.get(basePath)
 
+                // checkout remote branch
                 if (branch?.indexOf("remotes/") == 0) {
                     branch = branch.replace("remotes/", "")
                     val newBranchCmdr = "git branch $branch origin/$branch"
                     execCmd(newBranchCmdr, workPath)
                 }
+
+                // add local worktree
+                val path = "$basePath.worktree/$realProjectName@$branch"
 
                 val cmdr = "git worktree add $path $branch"
 
