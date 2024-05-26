@@ -31,6 +31,6 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow id="git_worktree_manager" secondary="true" icon="AllIcons.Toolwindows.WebToolWindow" anchor="left" factoryClass="worktree.windson.git_worktree_manage.ToolWindowFactory"/>
+        <changesViewContent tabName="Worktree"  displayNameSupplierClassName="worktree.windson.git_worktree_manage.GitWorktreeViewContentDisplayName" className="worktree.windson.git_worktree_manage.GitWorktreeViewsContent"/>
     </extensions>
 </idea-plugin>
