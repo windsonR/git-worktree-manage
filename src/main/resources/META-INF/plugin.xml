@@ -27,10 +27,11 @@
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
     <depends>com.intellij.modules.platform</depends>
+    <depends>Git4Idea</depends>
 
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-        <changesViewContent tabName="Worktree"  displayNameSupplierClassName="worktree.windson.git_worktree_manage.GitWorktreeViewContentDisplayName" className="worktree.windson.git_worktree_manage.GitWorktreeViewsContent"/>
+        <changesViewContent tabName="Worktree" displayNameSupplierClassName="worktree.windson.git_worktree_manage.ui.GitWorktreeViewContentDisplayName" className="worktree.windson.git_worktree_manage.ui.GitWorktreeViewsContent" predicateClassName="worktree.windson.git_worktree_manage.ui.GitWorkTreeTabPredicated"/>
     </extensions>
 </idea-plugin>

@@ -1,4 +1,4 @@
-package worktree.windson.git_worktree_manage
+package worktree.windson.git_worktree_manage.ui
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vcs.changes.ChangesViewManager.DisplayNameSupplier
