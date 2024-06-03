@@ -16,10 +16,14 @@ fun getRepository(project: Project): GitRepository {
 fun getBranchesCommon(project: Project, root: DefaultMutableTreeNode, isRemote: Boolean){
     val repo = getRepository(project)
     val branches = repo.branches
+    val localBranches = branches.localBranches
+    val localBranchesName = localBranches.map { it.name }
     val branchesLocalOrRemote = if (!isRemote) {
-        branches.localBranches
+        localBranches
     } else {
-        branches.remoteBranches
+        branches.remoteBranches.filter {
+            !localBranchesName.contains(it.name.replace("origin/", ""))
+        }
     }
     val existsWorktrees = getWorktreeNames(project)
     branchesLocalOrRemote.filter { it.name.isNotEmpty() }.filter { !existsWorktrees.contains(it.name) }.forEach {
