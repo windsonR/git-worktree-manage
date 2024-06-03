@@ -25,7 +25,7 @@ class GitWorktreeViewsContent(private val project: Project) : ChangesViewContent
         return rootPanel
     }
 
-    private fun updateContent(){
+    private fun updateContent() {
         rootPanel.removeAll()
         renderTree()
         rootPanel.validate()
@@ -57,6 +57,10 @@ class GitWorktreeViewsContent(private val project: Project) : ChangesViewContent
         // do not show root
         worktreeTree.isRootVisible = false
 
+        // expand all by default
+        for (i in 0 until worktreeTree.rowCount + 1) {
+            worktreeTree.expandRow(i)
+        }
         // context menu
         setContextMenu(worktreeTree)
 
