@@ -7,6 +7,7 @@ import com.intellij.ui.treeStructure.Tree
 import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridLayoutManager
 import com.intellij.util.ui.JBUI
+import worktree.windson.git_worktree_manage.bundle.GitWorkTreeBundle
 import worktree.windson.git_worktree_manage.util.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -37,9 +38,9 @@ class GitWorktreeViewsContent(private val project: Project) : ChangesViewContent
         val root = DefaultMutableTreeNode()
 
         // new 1st root
-        val branchRoot = DefaultMutableTreeNode("Branches")
-        val remoteBranchRoot = DefaultMutableTreeNode("Remotes")
-        val worktreeRoot = DefaultMutableTreeNode("Worktrees")
+        val branchRoot = DefaultMutableTreeNode(GitWorkTreeBundle.message("worktree.tab.tree.branches"))
+        val remoteBranchRoot = DefaultMutableTreeNode(GitWorkTreeBundle.message("worktree.tab.tree.remotes"))
+        val worktreeRoot = DefaultMutableTreeNode(GitWorkTreeBundle.message("worktree.tab.tree.worktrees"))
 
         // add branches and worktree to 2nd root
         getLocalBranches(project, branchRoot)
@@ -102,9 +103,9 @@ class GitWorktreeViewsContent(private val project: Project) : ChangesViewContent
                             val parent = selectedPathWithoutRoot[0]
                             val name = selectedPathWithoutRoot[1]
                             when (parent) {
-                                "Branches" -> setBranchesPopup(popup, name)
-                                "Remotes" -> setRemoteBranchesPopup(popup, name)
-                                "Worktrees" -> setWorktreesPopup(popup, name)
+                                GitWorkTreeBundle.message("worktree.tab.tree.branches") -> setBranchesPopup(popup, name)
+                                GitWorkTreeBundle.message("worktree.tab.tree.remotes") -> setRemoteBranchesPopup(popup, name)
+                                GitWorkTreeBundle.message("worktree.tab.tree.worktrees") -> setWorktreesPopup(popup, name)
                             }
                             popup.show(tree, e.x, e.y)
                         }
@@ -115,7 +116,7 @@ class GitWorktreeViewsContent(private val project: Project) : ChangesViewContent
     }
 
     private fun setBranchesPopup(popup: JPopupMenu, branch: String) {
-        val menu1 = JMenuItem("New Worktree")
+        val menu1 = JMenuItem(GitWorkTreeBundle.message("worktree.tab.tree.new_worktree"))
         menu1.addActionListener {
             newLocalWorkTree(project, branch)
             updateContent()
@@ -124,7 +125,7 @@ class GitWorktreeViewsContent(private val project: Project) : ChangesViewContent
     }
 
     private fun setRemoteBranchesPopup(popup: JPopupMenu, branch: String) {
-        val menu1 = JMenuItem("Checkout And New Worktree")
+        val menu1 = JMenuItem(GitWorkTreeBundle.message("worktree.tab.tree.checkout_new_worktree"))
         menu1.addActionListener {
             newRemoteWorkTree(project, branch)
             updateContent()
@@ -133,12 +134,12 @@ class GitWorktreeViewsContent(private val project: Project) : ChangesViewContent
     }
 
     private fun setWorktreesPopup(popup: JPopupMenu, branch: String) {
-        val menu1 = JMenuItem("Open Worktree")
+        val menu1 = JMenuItem(GitWorkTreeBundle.message("worktree.tab.tree.open_worktree"))
         menu1.addActionListener {
             openWorkTree(project, branch)
             updateContent()
         }
-        val menu2 = JMenuItem("Delete Worktree")
+        val menu2 = JMenuItem(GitWorkTreeBundle.message("worktree.tab.tree.delete_worktree"))
         menu2.addActionListener {
             removeWorkTree(project, branch)
             updateContent()
