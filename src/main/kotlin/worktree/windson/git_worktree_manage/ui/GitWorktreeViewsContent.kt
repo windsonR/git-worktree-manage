@@ -7,11 +7,7 @@ import com.intellij.ui.treeStructure.Tree
 import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridLayoutManager
 import com.intellij.util.ui.JBUI
-import worktree.windson.git_worktree_manage.*
-import worktree.windson.git_worktree_manage.util.getLocalBranches
-import worktree.windson.git_worktree_manage.util.getRemoteBranches
-import worktree.windson.git_worktree_manage.util.getWorkTree
-import worktree.windson.git_worktree_manage.util.newRemoteWorkTree
+import worktree.windson.git_worktree_manage.util.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import javax.swing.JComponent

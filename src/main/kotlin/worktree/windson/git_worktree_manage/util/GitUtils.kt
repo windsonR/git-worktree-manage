@@ -5,9 +5,6 @@ import com.intellij.openapi.project.ProjectManager
 import git4idea.GitUtil
 import git4idea.branch.GitBrancher
 import git4idea.repo.GitRepository
-import worktree.windson.git_worktree_manage.getWorktreeNames
-import worktree.windson.git_worktree_manage.getWorktreePathMap
-import worktree.windson.git_worktree_manage.newLocalWorkTree
 import javax.swing.tree.DefaultMutableTreeNode
 
 fun getRepository(project: Project): GitRepository {
