@@ -63,7 +63,7 @@ fun getWorktreeNames(project: Project): List<String> {
 fun openWorkTree(project: Project, branch: String) {
     val pathMap = getWorktreePathMap(project)
     val path = pathMap[branch]!!
-    ProjectUtil.openOrImport(path, null, false)
+    ProjectUtil.openOrImport(path, null, true)
 }
 
 fun removeWorkTree(project: Project, branch: String) {
