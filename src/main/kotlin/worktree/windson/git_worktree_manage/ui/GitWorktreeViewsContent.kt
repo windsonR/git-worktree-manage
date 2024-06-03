@@ -44,7 +44,7 @@ class GitWorktreeViewsContent(private val project: Project) : ChangesViewContent
 
         // add branches and worktree to 2nd root
         getLocalBranches(project, branchRoot)
-        getRemoteBranches(project, branchRoot)
+        getRemoteBranches(project, remoteBranchRoot)
         getWorkTree(project, worktreeRoot)
 
         // add node to root
