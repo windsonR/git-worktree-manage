@@ -5,10 +5,19 @@ plugins {
 }
 
 group = "worktree.windson"
-version = "1.0.6"
+version = "1.1.0"
 
 repositories {
+    maven {
+        url = uri("https://www.jetbrains.com/intellij-repository/releases")
+    }
     mavenCentral()
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit
+//    implementation("org.eclipse.jgit:org.eclipse.jgit:6.9.0.202403050737-r")  { exclude("org.slf4j") }
+
 }
 
 // Configure Gradle IntelliJ Plugin
@@ -17,7 +26,7 @@ intellij {
     version.set("2022.2.5")
     type.set("IC") // Target IDE Platform
 
-//    plugins.set(listOf("Git4Idea"))
+    plugins.set(listOf("Git4Idea"))
 }
 
 tasks {
