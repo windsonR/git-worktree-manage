@@ -94,22 +94,22 @@ fun newLocalWorkTree(project: Project, branch: String) {
     // demo:
     // origin/dev => dev
     // dev => dev
-    val rPath = if (branch.indexOf("/") >= 0) {
+    val rBranch = if (branch.indexOf("/") >= 0) {
         branch.split("/")[1]
     } else {
         branch
     }
 
     // add local worktree
-    val path = GitWorkTreeBundle.message("worktree.add.local.worktree.path", basePath, realProjectName, rPath)
+    val path = GitWorkTreeBundle.message("worktree.add.local.worktree.path", basePath, realProjectName, rBranch)
 
     // checkout local branch
     // checkout origin branch to local branch
-    exec(GitWorkTreeBundle.message("git.fetch.local.branch", rPath),project)
+    exec(GitWorkTreeBundle.message("git.fetch.local.branch", rBranch),project)
     // set branch to track origin branch
-    exec(GitWorkTreeBundle.message("git.branch.set.upstream", rPath),project)
+    exec(GitWorkTreeBundle.message("git.branch.set.upstream", rBranch),project)
 
-    val cmdr = GitWorkTreeBundle.message("worktree.add.local.worktree.cmdr", path, branch)
+    val cmdr = GitWorkTreeBundle.message("worktree.add.local.worktree.cmdr", path, rBranch)
 
     exec(cmdr, project)
 
