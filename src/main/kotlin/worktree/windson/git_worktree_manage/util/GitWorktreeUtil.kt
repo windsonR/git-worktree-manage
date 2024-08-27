@@ -20,7 +20,11 @@ fun exec(cmdr: String, project: Project): List<String> {
         exec = if (os.lowercase(Locale.getDefault()).startsWith("win")) {
             runtime.exec(cmdr, null, workPath.toFile())
         } else {
-            val cmd = arrayOf( GitWorkTreeBundle.message("worktree.no.windows.cmd.exec"),  GitWorkTreeBundle.message("worktree.no.windows.cmd.exec.c"), cmdr)
+            val cmd = arrayOf(
+                GitWorkTreeBundle.message("worktree.no.windows.cmd.exec"),
+                GitWorkTreeBundle.message("worktree.no.windows.cmd.exec.c"),
+                cmdr
+            )
             runtime.exec(cmd, null, workPath.toFile())
         }
         exec.waitFor()
@@ -42,7 +46,7 @@ fun exec(cmdr: String, project: Project): List<String> {
 }
 
 fun getWorktreePathMap(project: Project): MutableMap<String, String> {
-    val cmdr =  GitWorkTreeBundle.message("git.worktree.list")
+    val cmdr = GitWorkTreeBundle.message("git.worktree.list")
     val output = exec(cmdr, project)
     val pathMap = mutableMapOf<String, String>()
     output.forEach {
@@ -70,7 +74,7 @@ fun removeWorkTree(project: Project, branch: String) {
     val pathMap = getWorktreePathMap(project)
     val path = pathMap[branch]!!
     val cmdr = GitWorkTreeBundle.message("worktree.remove.path.cmdr", path)
-    val bo = MessageDialogBuilder.yesNo(GitWorkTreeBundle.message("worktree.remove.message", branch),"")
+    val bo = MessageDialogBuilder.yesNo(GitWorkTreeBundle.message("worktree.remove.message", branch), "")
     if (bo.ask(project)) {
         exec(cmdr, project)
     }
@@ -86,10 +90,26 @@ fun newLocalWorkTree(project: Project, branch: String) {
         basePath = basePath.substring(0, basePath.indexOf(realProjectName) + realProjectName.length)
     }
 
-    // add local worktree
-    val path = GitWorkTreeBundle.message("worktree.add.local.worktree.path",basePath,realProjectName,branch)
+    // get real branch name
+    // demo:
+    // origin/dev => dev
+    // dev => dev
+    val rPath = if (branch.indexOf("/") >= 0) {
+        branch.split("/")[1]
+    } else {
+        branch
+    }
 
-    val cmdr = GitWorkTreeBundle.message("worktree.add.local.worktree.cmdr", path,branch)
+    // add local worktree
+    val path = GitWorkTreeBundle.message("worktree.add.local.worktree.path", basePath, realProjectName, rPath)
+
+    // checkout local branch
+    // checkout origin branch to local branch
+    exec(GitWorkTreeBundle.message("git.fetch.local.branch", rPath),project)
+    // set branch to track origin branch
+    exec(GitWorkTreeBundle.message("git.branch.set.upstream", rPath),project)
+
+    val cmdr = GitWorkTreeBundle.message("worktree.add.local.worktree.cmdr", path, branch)
 
     exec(cmdr, project)
 
