@@ -20,9 +20,14 @@ import javax.swing.tree.DefaultMutableTreeNode
 
 class GitWorktreeViewsContent(private val project: Project) : ChangesViewContentProvider {
     private lateinit var rootPanel: JPanel
+    private lateinit var refreshMenu: JMenuItem
     override fun initContent(): JComponent {
         rootPanel = JPanel()
         updateContent()
+        refreshMenu = JMenuItem(GitWorkTreeBundle.message("worktree.tab.tree.refresh_worktree"))
+        refreshMenu.addActionListener {
+            updateContent()
+        }
         return rootPanel
     }
 
@@ -122,6 +127,7 @@ class GitWorktreeViewsContent(private val project: Project) : ChangesViewContent
             updateContent()
         }
         popup.add(menu1)
+        popup.add(refreshMenu)
     }
 
     private fun setRemoteBranchesPopup(popup: JPopupMenu, branch: String) {
@@ -131,6 +137,7 @@ class GitWorktreeViewsContent(private val project: Project) : ChangesViewContent
             updateContent()
         }
         popup.add(menu1)
+        popup.add(refreshMenu)
     }
 
     private fun setWorktreesPopup(popup: JPopupMenu, branch: String) {
@@ -146,6 +153,8 @@ class GitWorktreeViewsContent(private val project: Project) : ChangesViewContent
         }
         popup.add(menu1)
         popup.add(menu2)
+        popup.addSeparator()
+        popup.add(refreshMenu)
     }
 
 }
