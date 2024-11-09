@@ -2,7 +2,9 @@ package worktree.windson.git_worktree_manage.util
 
 import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.ui.MessageDialogBuilder
+import git4idea.branch.GitBrancher
 import worktree.windson.git_worktree_manage.bundle.GitWorkTreeBundle
 import java.io.BufferedReader
 import java.io.IOException
@@ -81,15 +83,6 @@ fun removeWorkTree(project: Project, branch: String) {
 }
 
 fun newLocalWorkTree(project: Project, branch: String) {
-    var basePath = project.basePath!!
-
-    val projectName = project.name
-
-    val realProjectName = projectName.split('@')[0]
-    if (basePath.indexOf("worktree") > 0) {
-        basePath = basePath.substring(0, basePath.indexOf(realProjectName) + realProjectName.length)
-    }
-
     // get real branch name
     // demo:
     // origin/dev => dev
@@ -99,20 +92,34 @@ fun newLocalWorkTree(project: Project, branch: String) {
     } else {
         branch
     }
+    var basePath = project.basePath!!
 
-    // add local worktree
-    val path = GitWorkTreeBundle.message("worktree.add.local.worktree.path", basePath, realProjectName, rBranch)
+    val projectName = project.name
 
-    // checkout local branch
-    // checkout origin branch to local branch
-    exec(GitWorkTreeBundle.message("git.fetch.local.branch", rBranch),project)
-    // set branch to track origin branch
-    exec(GitWorkTreeBundle.message("git.branch.set.upstream", rBranch),project)
+    ProjectManager.getInstance().run {
+        val repo = getRepository(project)
+        // create local new branch
+        GitBrancher.getInstance(project).checkoutNewBranch(rBranch, listOf(repo))
 
-    val cmdr = GitWorkTreeBundle.message("worktree.add.local.worktree.cmdr", path, rBranch)
+        // create local worktree
+        val realProjectName = projectName.split('@')[0]
+        if (basePath.indexOf("worktree") > 0) {
+            basePath = basePath.substring(0, basePath.indexOf(realProjectName) + realProjectName.length)
+        }
 
-    exec(cmdr, project)
+        // add local worktree
+        val path = GitWorkTreeBundle.message("worktree.add.local.worktree.path", basePath, realProjectName, rBranch)
 
-    ProjectUtil.openOrImport(path, null, true)
+        // checkout origin branch to local branch
+        exec(GitWorkTreeBundle.message("git.fetch.local.branch", rBranch), project)
+        // set branch to track origin branch
+        exec(GitWorkTreeBundle.message("git.branch.set.upstream", rBranch), project)
+
+        val cmdr = GitWorkTreeBundle.message("worktree.add.local.worktree.cmdr", path, rBranch)
+
+        exec(cmdr, project)
+
+        ProjectUtil.openOrImport(path, null, true)
+    }
+
 }
-

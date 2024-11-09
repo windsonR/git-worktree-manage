@@ -49,9 +49,7 @@ fun getWorkTree(project: Project, root: DefaultMutableTreeNode){
 }
 
 fun newRemoteWorkTree(project: Project, branch: String){
-    val repo = getRepository(project)
     ProjectManager.getInstance().run {
-        GitBrancher.getInstance(project).checkoutNewBranch(branch, listOf(repo))
         newLocalWorkTree(project, branch)
     }
 }
