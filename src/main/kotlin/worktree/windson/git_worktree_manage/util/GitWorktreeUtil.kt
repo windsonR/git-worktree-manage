@@ -97,10 +97,6 @@ fun newLocalWorkTree(project: Project, branch: String) {
     val projectName = project.name
 
     ProjectManager.getInstance().run {
-        val repo = getRepository(project)
-        // create local new branch
-        GitBrancher.getInstance(project).checkoutNewBranch(rBranch, listOf(repo))
-
         // create local worktree
         val realProjectName = projectName.split('@')[0]
         if (basePath.indexOf("worktree") > 0) {
