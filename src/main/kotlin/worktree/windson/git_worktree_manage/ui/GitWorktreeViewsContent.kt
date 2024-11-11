@@ -95,7 +95,7 @@ class GitWorktreeViewsContent(private val project: Project) : ChangesViewContent
     private fun setContextMenu(tree: Tree) {
         tree.addMouseListener(object : MouseAdapter() {
             override fun mouseClicked(e: MouseEvent) {
-                // 如果是右键点击
+                // if it is right mouse click
                 if (MouseEvent.BUTTON3 == e.button) {
                     val row: Int = (e.source as Tree).selectionRows?.get(0) ?: return
                     if (row != -1) {
@@ -103,7 +103,7 @@ class GitWorktreeViewsContent(private val project: Project) : ChangesViewContent
                         val selectedPathWithoutRoot =
                             selectedPath.substring(IntRange(2, selectedPath.length - 2)).split(",").map { it.trim() }
                         if (selectedPathWithoutRoot.size == 2) {
-                            // 显示右键菜单
+                            // show context menu
                             val popup = JPopupMenu()
                             val parent = selectedPathWithoutRoot[0]
                             val name = selectedPathWithoutRoot[1]
