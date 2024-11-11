@@ -4,7 +4,6 @@ import com.intellij.ide.impl.ProjectUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.ui.MessageDialogBuilder
-import git4idea.branch.GitBrancher
 import worktree.windson.git_worktree_manage.bundle.GitWorkTreeBundle
 import java.io.BufferedReader
 import java.io.IOException
@@ -13,30 +12,33 @@ import java.nio.file.Paths
 import java.util.*
 
 fun exec(cmdr: String, project: Project): List<String> {
-    val runtime = Runtime.getRuntime()
     val workPath = Paths.get(project.basePath!!)
     var result: List<String> = listOf()
     try {
-        val exec: Process
         val os = System.getProperty("os.name")
-        exec = if (os.lowercase(Locale.getDefault()).startsWith("win")) {
-            runtime.exec(cmdr, null, workPath.toFile())
+
+        val process: Process = if (os.lowercase(Locale.getDefault()).startsWith("win")) {
+            val pb = ProcessBuilder(cmdr)
+            pb.directory(workPath.toFile())
+            pb.start()
         } else {
-            val cmd = arrayOf(
+            val pb = ProcessBuilder(
                 GitWorkTreeBundle.message("worktree.no.windows.cmd.exec"),
                 GitWorkTreeBundle.message("worktree.no.windows.cmd.exec.c"),
                 cmdr
             )
-            runtime.exec(cmd, null, workPath.toFile())
+            pb.directory(workPath.toFile())
+            pb.start()
         }
-        exec.waitFor()
-        val br = BufferedReader(InputStreamReader(exec.inputStream))
+        val br = BufferedReader(InputStreamReader(process.inputStream))
         val output = StringBuilder()
         var inline: String?
         while (null != br.readLine().also { inline = it }) {
             output.append(inline).append("\n")
         }
-        exec.destroy()
+        process.waitFor()
+
+        process.destroy()
         br.close()
         result = output.split("\n")
     } catch (e: IOException) {
