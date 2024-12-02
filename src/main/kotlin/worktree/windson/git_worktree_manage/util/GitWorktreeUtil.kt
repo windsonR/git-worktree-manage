@@ -81,6 +81,7 @@ fun removeWorkTree(project: Project, branch: String) {
     val bo = MessageDialogBuilder.yesNo(GitWorkTreeBundle.message("worktree.remove.message", branch), "")
     if (bo.ask(project)) {
         exec(cmdr, project)
+        exec(GitWorkTreeBundle.message("worktree.prune.path.cmdr"), project)
     }
 }
 
