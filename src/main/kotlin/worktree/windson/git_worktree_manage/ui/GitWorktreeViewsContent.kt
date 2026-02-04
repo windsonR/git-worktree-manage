@@ -8,6 +8,8 @@ import com.intellij.uiDesigner.core.GridConstraints
 import com.intellij.uiDesigner.core.GridLayoutManager
 import com.intellij.util.ui.JBUI
 import worktree.windson.git_worktree_manage.bundle.GitWorkTreeBundle
+import worktree.windson.git_worktree_manage.settings.DefaultExpandedNode
+import worktree.windson.git_worktree_manage.settings.GitWorktreeSettings
 import worktree.windson.git_worktree_manage.util.*
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -63,9 +65,18 @@ class GitWorktreeViewsContent(private val project: Project) : ChangesViewContent
         // do not show root
         worktreeTree.isRootVisible = false
 
-        // expand all by default
-        for (i in 0 until worktreeTree.rowCount + 1) {
-            worktreeTree.expandRow(i)
+        // expand configured node by default
+        // indices match order in renderTree(): branchRoot(0), remoteBranchRoot(1), worktreeRoot(2)
+        when (GitWorktreeSettings.getInstance().defaultExpandedNode) {
+            DefaultExpandedNode.ALL -> {
+                for (i in 0 until worktreeTree.rowCount) {
+                    worktreeTree.expandRow(i)
+                }
+            }
+            DefaultExpandedNode.BRANCHES -> worktreeTree.expandRow(0)
+            DefaultExpandedNode.REMOTES -> worktreeTree.expandRow(1)
+            DefaultExpandedNode.WORKTREES -> worktreeTree.expandRow(2)
+            DefaultExpandedNode.NONE -> { /* do nothing */ }
         }
         // context menu
         setContextMenu(worktreeTree)

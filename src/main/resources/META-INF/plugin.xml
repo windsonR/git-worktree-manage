@@ -33,5 +33,7 @@
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
         <changesViewContent tabName="Worktree" displayNameSupplierClassName="worktree.windson.git_worktree_manage.ui.GitWorktreeViewContentDisplayName" className="worktree.windson.git_worktree_manage.ui.GitWorktreeViewsContent" predicateClassName="worktree.windson.git_worktree_manage.ui.GitWorkTreeTabPredicated"/>
+        <applicationService serviceImplementation="worktree.windson.git_worktree_manage.settings.GitWorktreeSettings"/>
+        <applicationConfigurable parentId="tools" instance="worktree.windson.git_worktree_manage.settings.GitWorktreeSettingsConfigurable" id="worktree.windson.git_worktree_manage.settings" displayName="Git Worktree"/>
     </extensions>
 </idea-plugin>
