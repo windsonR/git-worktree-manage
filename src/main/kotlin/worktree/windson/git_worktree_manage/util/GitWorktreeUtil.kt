@@ -1,64 +1,25 @@
 package worktree.windson.git_worktree_manage.util
 
 import com.intellij.ide.impl.ProjectUtil
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.ui.MessageDialogBuilder
+import com.intellij.openapi.vcs.LocalFilePath
+import git4idea.commands.Git
 import worktree.windson.git_worktree_manage.bundle.GitWorkTreeBundle
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
-import java.nio.file.Paths
-import java.util.*
 
-fun exec(cmdr: String, project: Project): List<String> {
-    val workPath = Paths.get(project.basePath!!)
-    var result: List<String> = listOf()
-    try {
-        val os = System.getProperty("os.name")
-
-        val process: Process = if (os.lowercase(Locale.getDefault()).startsWith("win")) {
-            val pb = ProcessBuilder(cmdr)
-            pb.directory(workPath.toFile())
-            pb.start()
-        } else {
-            val pb = ProcessBuilder(
-                GitWorkTreeBundle.message("worktree.no.windows.cmd.exec"),
-                GitWorkTreeBundle.message("worktree.no.windows.cmd.exec.c"),
-                cmdr
-            )
-            pb.directory(workPath.toFile())
-            pb.start()
-        }
-        val br = BufferedReader(InputStreamReader(process.inputStream))
-        val output = StringBuilder()
-        var inline: String?
-        while (null != br.readLine().also { inline = it }) {
-            output.append(inline).append("\n")
-        }
-        process.waitFor()
-
-        process.destroy()
-        br.close()
-        result = output.split("\n")
-    } catch (e: IOException) {
-        // LOG.error(e)
-    } catch (e: InterruptedException) {
-        // LOG.error(e)
-    }
-    return result
-}
 
 fun getWorktreePathMap(project: Project): MutableMap<String, String> {
-    val cmdr = GitWorkTreeBundle.message("git.worktree.list")
-    val output = exec(cmdr, project)
+    val repo = getRepository(project)
+    val wth = repo.workingTreeHolder
+    val workingTrees = wth.getWorkingTrees()
     val pathMap = mutableMapOf<String, String>()
-    output.forEach {
-        val list = it.split(" ")
-        val path = list[0]
-        val branch = list[list.size - 1].replace("[", "").replace("]", "")
-        if (branch.isNotEmpty() && path.isNotEmpty()) {
-            pathMap.plusAssign(branch to path)
+    workingTrees.forEach { workingTree ->
+        val path = workingTree.path
+        val branch = workingTree.currentBranch?.name ?: ""
+        if (branch.isNotEmpty() && path.ioFile.exists()) {
+            pathMap.plusAssign(branch to path.path)
         }
     }
     return pathMap
@@ -77,11 +38,12 @@ fun openWorkTree(project: Project, branch: String) {
 fun removeWorkTree(project: Project, branch: String) {
     val pathMap = getWorktreePathMap(project)
     val path = pathMap[branch]!!
-    val cmdr = GitWorkTreeBundle.message("worktree.remove.path.cmdr", path)
+    val repo = getRepository(project)
+    val workingTree = repo.workingTreeHolder.getWorkingTrees()
+        .firstOrNull { it.path.path == path } ?: return
     val bo = MessageDialogBuilder.yesNo(GitWorkTreeBundle.message("worktree.remove.message", branch), "")
     if (bo.ask(project)) {
-        exec(cmdr, project)
-        exec(GitWorkTreeBundle.message("worktree.prune.path.cmdr"), project)
+        Git.getInstance().deleteWorkingTree(project, workingTree)
     }
 }
 
@@ -109,16 +71,35 @@ fun newLocalWorkTree(project: Project, branch: String) {
         // add local worktree
         val path = GitWorkTreeBundle.message("worktree.add.local.worktree.path", basePath, realProjectName, rBranch)
 
-        // checkout origin branch to local branch
-        exec(GitWorkTreeBundle.message("git.fetch.local.branch", rBranch), project)
-        // set branch to track origin branch
-        exec(GitWorkTreeBundle.message("git.branch.set.upstream", rBranch), project)
+        // git 操作放到后台线程执行，避免阻塞 EDT
+        ApplicationManager.getApplication().executeOnPooledThread {
+            val repo = getRepository(project)
+            val git = Git.getInstance()
 
-        val cmdr = GitWorkTreeBundle.message("worktree.add.local.worktree.cmdr", path, rBranch)
+            // 本地无此分支且存在远程分支时，fetch 创建同名本地分支并设置 upstream
+            val localBranch = repo.branches.findLocalBranch(rBranch)
+            if (localBranch == null && repo.branches.findRemoteBranch(branch) != null) {
+                val remote = repo.remotes.firstOrNull { it.name == "origin" }
+                if (remote != null) {
+                    // git fetch origin {0}:{0}
+                    val fetchResult = git.fetch(repo, remote, emptyList(), "$rBranch:$rBranch")
+                    if (fetchResult.success()) {
+                        // git branch --set-upstream-to=origin/{0} {0}
+                        git.setUpstream(repo, rBranch, branch)
+                    }
+                }
+            }
 
-        exec(cmdr, project)
+            // git worktree add {0} {1}
+            repo.branches.findLocalBranch(rBranch)?.let { branchForWorktree ->
+                git.createWorkingTree(repo, LocalFilePath(path, false), branchForWorktree, null)
+            }
 
-        ProjectUtil.openOrImport(path, null, true)
+            // 回到 EDT 打开新项目
+            ApplicationManager.getApplication().invokeLater {
+                ProjectUtil.openOrImport(path, null, true)
+            }
+        }
     }
 
 }
